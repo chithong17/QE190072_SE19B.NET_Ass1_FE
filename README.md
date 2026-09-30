@@ -102,3 +102,69 @@ NEXT_PUBLIC_API_URL=https://your-backend-api.onrender.com/api
   - **Framework Preset:** `Next.js`
   - **Environment Variables:**
     - `NEXT_PUBLIC_API_URL`: URL Backend API đã deploy (VD: `https://tasktrack-api.onrender.com/api`).
+
+---
+
+## 📊 Sơ đồ cơ sở dữ liệu (ERD - Entity Relationship Diagram)
+
+```mermaid
+erDiagram
+    DEPARTMENT ||--o{ PROJECT : "has many"
+    PROJECT ||--o{ TASK : "contains"
+    TASK ||--o{ TASK_TAG : "has"
+    TAG ||--o{ TASK_TAG : "categorizes"
+
+    DEPARTMENT {
+        int DepartmentID PK
+        string DepartmentName
+        string DepartmentDescription
+        boolean IsActive
+    }
+
+    PROJECT {
+        int ProjectID PK
+        string ProjectName
+        string Description
+        date StartDate
+        date EndDate
+        int Status "0: Not Started, 1: In Progress, 2: Completed, 3: On Hold"
+        int DepartmentID FK
+        boolean IsActive
+        datetime CreatedDate
+    }
+
+    TASK {
+        int TaskID PK
+        string Title
+        string Description
+        int Status "0: To Do, 1: In Progress, 2: Done, 3: Cancelled"
+        int Priority "0: Low, 1: Medium, 2: High, 3: Critical"
+        date DueDate
+        int ProjectID FK
+        boolean IsActive
+        datetime CreatedDate
+        datetime ModifiedDate
+    }
+
+    TAG {
+        int TagID PK
+        string TagName
+        string Color
+    }
+
+    TASK_TAG {
+        int TaskID PK, FK
+        int TagID PK, FK
+    }
+```
+
+---
+
+## 🌟 Tính năng cộng điểm (Bonus Features)
+
+- [x] **GitHub Actions CI/CD**: Tự động kiểm tra build Next.js trên mỗi push (`.github/workflows/ci.yml`).
+- [x] **ERD Diagram**: Tài liệu sơ đồ thực thể liên kết trực quan trong `README.md`.
+- [x] **Task Status Filter**: Lọc theo trạng thái trên danh sách công việc (`/tasks/manage`) và chi tiết dự án (`/projects/[id]`).
+- [x] **3 Project Views**: Hỗ trợ đồng thời 3 chế độ xem linh hoạt: Kanban Board, Timeline trực quan, và List Table.
+- [x] **Field-level Validation & Confirm Dialogs**: Hộp thoại xác nhận trước mọi thao tác xóa dữ liệu.
+
