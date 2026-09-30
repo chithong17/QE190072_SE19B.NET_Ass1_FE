@@ -30,6 +30,19 @@ interface Task {
   projectId: number;
 }
 
+const initialThemes = [
+  'bg-blue-600 shadow-blue-500/20',
+  'bg-violet-600 shadow-violet-500/20',
+  'bg-orange-500 shadow-orange-500/20',
+  'bg-fuchsia-600 shadow-fuchsia-500/20',
+  'bg-cyan-600 shadow-cyan-500/20',
+  'bg-emerald-600 shadow-emerald-500/20',
+];
+
+function initialTheme(name: string) {
+  return initialThemes[(name.charCodeAt(0) || 0) % initialThemes.length];
+}
+
 export default function PublicDepartments() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -97,7 +110,7 @@ export default function PublicDepartments() {
 
         <Link
           href="/departments/manage"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-600"
         >
           Manage departments <ArrowRight className="h-3.5 w-3.5" />
         </Link>
@@ -130,7 +143,7 @@ export default function PublicDepartments() {
               >
                 <div>
                   <div className="flex items-start justify-between gap-3">
-                    <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-600 text-lg font-bold text-white shadow-md shadow-blue-500/20">
+                    <div className={`grid h-11 w-11 place-items-center rounded-xl text-lg font-bold text-white shadow-md ${initialTheme(dept.departmentName)}`}>
                       {dept.departmentName.charAt(0).toUpperCase()}
                     </div>
                     <span className="font-mono text-xs font-semibold text-slate-400">
