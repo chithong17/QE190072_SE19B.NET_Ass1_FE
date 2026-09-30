@@ -123,8 +123,8 @@ export default function DepartmentsPage() {
     setLoading(true);
     try {
       const [departmentResponse, projectResponse, taskResponse] = await Promise.all([
-        api.get('/departments'),
-        api.get('/projects'),
+        api.get('/departments/manage'),
+        api.get('/projects/manage'),
         api.get('/tasks'),
       ]);
       setDepartments(departmentResponse.data);
@@ -750,17 +750,19 @@ export default function DepartmentsPage() {
                 className="w-full rounded-md border border-slate-200 bg-white p-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={currentDept.isActive ?? true}
-                onChange={(event) =>
-                  setCurrentDept({ ...currentDept, isActive: event.target.checked })
-                }
-                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-              />
-              Active department
-            </label>
+            {isEditMode && (
+              <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={currentDept.isActive !== false}
+                  onChange={(event) =>
+                    setCurrentDept({ ...currentDept, isActive: event.target.checked })
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span><span className="font-semibold">Visible on public pages</span><span className="block text-xs text-slate-500">Turn off to archive this department; it remains available in Management.</span></span>
+              </label>
+            )}
           </div>
           <div className="flex justify-end gap-2 border-t border-slate-100 pt-3">
             <Button

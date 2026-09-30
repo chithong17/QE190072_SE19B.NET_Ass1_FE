@@ -73,6 +73,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [view, setView] = useState<'table' | 'grid'>('table');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -90,7 +91,7 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       const [projectsResponse, departmentsResponse, tasksResponse] = await Promise.all([
-        api.get('/projects'),
+        api.get('/projects/manage'),
         api.get('/departments'),
         api.get('/tasks'),
       ]);
@@ -112,9 +113,12 @@ export default function ProjectsPage() {
         project.description?.toLowerCase().includes(search.toLowerCase());
       const matchesStatus =
         statusFilter === 'all' || project.status.toString() === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesVisibility =
+        visibilityFilter === 'all' ||
+        (visibilityFilter === 'active' ? project.isActive !== false : project.isActive === false);
+      return matchesSearch && matchesStatus && matchesVisibility;
     });
-  }, [projects, search, statusFilter]);
+  }, [projects, search, statusFilter, visibilityFilter]);
 
   const getProgress = (projectId: number) => {
     const projectTasks = tasks.filter((task) => task.projectId === projectId);
@@ -262,6 +266,18 @@ export default function ProjectsPage() {
             <option value="3">On Hold</option>
           </select>
         </label>
+        <label className="flex min-w-32 flex-col px-2 text-xs font-semibold text-slate-400">
+          <span className="mb-1 uppercase tracking-wide">Visibility</span>
+          <select
+            value={visibilityFilter}
+            onChange={(event) => setVisibilityFilter(event.target.value)}
+            className="bg-transparent text-sm font-medium text-slate-700 outline-none"
+          >
+            <option value="all">All projects</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </label>
         <div className="flex items-center justify-between gap-2 lg:justify-end">
           <span className="px-2 text-sm font-medium text-slate-500">
             {filteredProjects.length} projects
@@ -312,6 +328,7 @@ export default function ProjectsPage() {
                   <th className="px-5 py-4">Department</th>
                   <th className="px-5 py-4">Dates</th>
                   <th className="px-5 py-4">Status</th>
+                  <th className="px-5 py-4">Visibility</th>
                   <th className="px-5 py-4">Progress</th>
                   <th className="px-5 py-4 text-right">Actions</th>
                 </tr>
@@ -363,6 +380,11 @@ export default function ProjectsPage() {
                           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusInfo.className}`}
                         >
                           {statusInfo.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${project.isActive === false ? 'bg-slate-200 text-slate-600' : 'bg-emerald-50 text-emerald-700'}`}>
+                          {project.isActive === false ? 'Inactive' : 'Active'}
                         </span>
                       </td>
                       <td className="px-5 py-4 min-w-[150px]">
@@ -435,7 +457,7 @@ export default function ProjectsPage() {
             return (
               <article
                 key={project.projectId}
-                className={`group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br ${theme.soft} p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70`}
+                className={`group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br ${theme.soft} p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70 ${project.isActive === false ? 'opacity-75 grayscale-[0.25]' : ''}`}
               >
                 <div className="absolute -right-10 -top-12 h-32 w-32 rounded-full bg-white/70" />
                 <div className="relative min-w-0 flex-1">
@@ -473,6 +495,9 @@ export default function ProjectsPage() {
                     >
                       {statusInfo.label}
                     </span>
+                    {project.isActive === false && (
+                      <span className="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600">Inactive</span>
+                    )}
                   </div>
                 </div>
                 <div className="relative mt-5">
@@ -627,6 +652,17 @@ export default function ProjectsPage() {
                 />
               </div>
             </div>
+            {isEditMode && (
+              <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={currentProject.isActive !== false}
+                  onChange={(event) => setCurrentProject({ ...currentProject, isActive: event.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span><span className="font-semibold">Visible on public pages</span><span className="block text-xs text-slate-500">Turn off to archive this project; it remains available in Management.</span></span>
+              </label>
+            )}
           </div>
           <div className="flex justify-end gap-3">
             <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
