@@ -67,8 +67,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             <span className="text-lg">T</span>
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-semibold text-gray-900 text-sm">TaskTrack</h2>
-            <p className="text-xs text-gray-400 truncate">admin@tasktrack.com</p>
+            <h2 className="font-bold text-gray-900 text-base">TaskTrack</h2>
           </div>
         </Link>
         {onClose && (
