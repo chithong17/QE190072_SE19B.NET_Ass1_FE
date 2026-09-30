@@ -9,15 +9,12 @@ import { toast } from 'sonner';
 import {
   AlertTriangle,
   Calendar,
-  CalendarDays,
   CalendarRange,
   CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   Clock,
   Edit2,
   Eye,
-  FolderKanban,
   Kanban,
   List,
   Loader2,
@@ -89,6 +86,8 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     loadData();
+  // loadData is intentionally keyed by the current route ID.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   async function loadData() {
@@ -180,20 +179,6 @@ export default function ProjectDetail() {
     setError('');
   };
 
-  const openCreateForDate = (dateStr: string) => {
-    setEditingTask({
-      title: '',
-      description: '',
-      projectId: Number(params.id),
-      status: 0,
-      priority: 1,
-      dueDate: dateStr,
-      isActive: true,
-    });
-    setSelectedTags([]);
-    setError('');
-  };
-
   const openEdit = (task: Task) => {
     setEditingTask({
       ...task,
@@ -208,10 +193,10 @@ export default function ProjectDetail() {
       setError('Task title is required.');
       return;
     }
-    const { project: _project, tags: _tags, ...taskFields } = editingTask as Partial<Task> & { project?: unknown };
     const task = {
-      ...taskFields,
+      taskId: editingTask.taskId,
       title: editingTask.title.trim(),
+      description: editingTask.description || null,
       projectId: Number(params.id),
       status: Number(editingTask.status ?? 0),
       priority: Number(editingTask.priority ?? 1),
@@ -558,7 +543,7 @@ export default function ProjectDetail() {
                 <span>Sort:</span>
                 <select
                   value={timelineSort}
-                  onChange={(e) => setTimelineSort(e.target.value as any)}
+                  onChange={(e) => setTimelineSort(e.target.value as 'priority-newest' | 'dueDate-desc' | 'dueDate-asc')}
                   className="h-9 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-xs font-medium text-slate-800 outline-none focus:border-blue-500"
                 >
                   <option value="priority-newest">Priority</option>

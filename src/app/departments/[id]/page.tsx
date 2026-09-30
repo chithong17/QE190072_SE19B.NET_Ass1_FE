@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/axios';
@@ -19,7 +19,6 @@ import {
   ListChecks,
   Loader2,
   Search,
-  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -104,12 +103,7 @@ export default function DepartmentDetailPage() {
   const [search, setSearch] = useState('');
   const [selectedProjectId, setSelectedProjectId] = useState<number | 'all'>('all');
 
-  useEffect(() => {
-    if (!params.id) return;
-    loadDepartment();
-  }, [params.id]);
-
-  async function loadDepartment() {
+  const loadDepartment = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get(`/departments/${params.id}`);
@@ -121,7 +115,13 @@ export default function DepartmentDetailPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [params.id, router]);
+
+  useEffect(() => {
+    if (!params.id) return;
+    const timer = window.setTimeout(() => void loadDepartment(), 0);
+    return () => window.clearTimeout(timer);
+  }, [params.id, loadDepartment]);
 
   // Summary Metrics
   const metrics = useMemo(() => {

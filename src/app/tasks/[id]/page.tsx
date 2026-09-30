@@ -103,6 +103,8 @@ export default function TaskDetail() {
   useEffect(() => {
     const timer = window.setTimeout(() => void loadTask(), 0);
     return () => window.clearTimeout(timer);
+  // The task ID is the only value that should trigger a reload here.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   const openEditModal = () => {
@@ -128,12 +130,14 @@ export default function TaskDetail() {
       setErrorMsg("");
       const payload = {
         task: {
-          ...editForm,
+          taskId: task.taskId,
           title: editForm.title.trim(),
+          description: editForm.description || null,
           status: Number(editForm.status),
           priority: Number(editForm.priority),
           projectId: task.projectId,
           dueDate: editForm.dueDate || null,
+          isActive: editForm.isActive ?? task.isActive,
         },
         tagIds: selectedTagIds,
       };

@@ -130,8 +130,7 @@ export default function TasksPage() {
   const saveTask = async () => {
     if (!currentTask.title?.trim()) { setErrorMsg("Task title is required."); return; }
     if (!currentTask.projectId) { setErrorMsg("Please choose a project."); return; }
-    const { project: _project, tags: _tags, ...taskFields } = currentTask as Partial<Task> & { project?: unknown };
-    const task = { ...taskFields, title: currentTask.title.trim(), status: Number(currentTask.status), priority: Number(currentTask.priority), projectId: Number(currentTask.projectId), dueDate: currentTask.dueDate || null };
+    const task = { taskId: currentTask.taskId, title: currentTask.title.trim(), description: currentTask.description || null, status: Number(currentTask.status), priority: Number(currentTask.priority), projectId: Number(currentTask.projectId), dueDate: currentTask.dueDate || null, isActive: currentTask.isActive ?? true };
     try {
       if (isEditMode) {
         await api.put(`/tasks/${currentTask.taskId}`, { task, tagIds: selectedTagIds });
@@ -170,8 +169,7 @@ export default function TasksPage() {
       await Promise.all(selectedTasks.map(async (id) => {
         const current = tasks.find((task) => task.taskId === id);
         if (current) {
-          const { project: _project, tags: _tags, ...taskFields } = current as Task & { project?: unknown };
-          await api.put(`/tasks/${id}`, { task: { ...taskFields, status: 2 }, tagIds: current.tags?.map((tag) => tag.tagId) || [] });
+          await api.put(`/tasks/${id}`, { task: { taskId: current.taskId, title: current.title, description: current.description || null, status: 2, priority: current.priority, projectId: current.projectId, dueDate: current.dueDate || null, isActive: current.isActive }, tagIds: current.tags?.map((tag) => tag.tagId) || [] });
         }
       }));
       toast.success(`${selectedTasks.length} tasks marked as done!`);
