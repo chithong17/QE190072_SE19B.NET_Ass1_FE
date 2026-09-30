@@ -18,7 +18,7 @@ import api from '@/lib/axios';
 const mainMenu = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Departments', href: '/departments', icon: Building2 },
-  { name: 'Projects', href: '/projects/manage', icon: FolderKanban },
+  { name: 'Projects', href: '/projects', icon: FolderKanban },
   { name: 'Tasks', href: '/tasks/manage', icon: CheckSquare },
   { name: 'Search', href: '/search', icon: Search },
   { name: 'Tags', href: '/tags/manage', icon: Tags },
@@ -148,7 +148,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             })}
 
             <Link
-              href="/projects/manage"
+              href="/projects"
               onClick={onClose}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors mt-2 text-xs font-medium"
             >

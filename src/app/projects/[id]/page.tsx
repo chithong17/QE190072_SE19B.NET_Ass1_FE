@@ -253,7 +253,7 @@ export default function ProjectDetail() {
     return (
       <div className="p-8 text-center">
         <p className="text-slate-500">{error || 'Project not found.'}</p>
-        <Link href="/projects/manage" className="mt-4 inline-block text-sm font-semibold text-blue-600">
+        <Link href="/projects" className="mt-4 inline-block text-sm font-semibold text-blue-600">
           ← Back to projects
         </Link>
       </div>
@@ -263,7 +263,7 @@ export default function ProjectDetail() {
     <div className="space-y-6 pb-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <Link
-          href="/projects/manage"
+          href="/projects"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-600"
         >
           <ChevronLeft className="h-4 w-4" /> Back to projects
