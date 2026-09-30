@@ -208,8 +208,9 @@ export default function ProjectDetail() {
       setError('Task title is required.');
       return;
     }
+    const { project: _project, tags: _tags, ...taskFields } = editingTask as Partial<Task> & { project?: unknown };
     const task = {
-      ...editingTask,
+      ...taskFields,
       title: editingTask.title.trim(),
       projectId: Number(params.id),
       status: Number(editingTask.status ?? 0),
